@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Management Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 8px;
+    }
+    #studentList {
+      margin-top: 20px;
+    }
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Student Form</h2>
+
+  <label for="studentName">Student Name:</label>
+  <input type="text" id="studentName" placeholder="Enter name">
+
+  <label for="studentMarks">Marks:</label>
+  <input type="number" id="studentMarks" placeholder="Enter marks">
+
+  <br>
+
+  <button onclick="addStudent()">Add Student</button>
+  <button onclick="showStudents()">Show All Students</button>
+  <button onclick="showPassedStudents()">Show Passed Students (≥ 40)</button>
+  <button onclick="calculateAverage()">Calculate Average Marks</button>
+  <button onclick="findTopper()">Find Topper</button>
+
+  <div id="studentList"></div>
+
+  <script>
+    const students = [];
+
+    function addStudent() {
+      const name = document.getElementById("studentName").value.trim();
+      const marks = parseFloat(document.getElementById("studentMarks").value);
+
+      if (name === "" || isNaN(marks)) {
+        alert("Please enter both name and valid marks.");
+        return;
+      }
+
+      students.push({ name, marks });
+
+      document.getElementById("studentName").value = "";
+      document.getElementById("studentMarks").value = "";
+
+      alert("Student added!");
+    }
+
+    function showStudents() {
+      displayStudents("All Students", students);
+    }
+
+    function showPassedStudents() {
+      const passed = students.filter(student => student.marks >= 40);
+      displayStudents("Passed Students (Marks ≥ 40)", passed);
+    }
+
+    function calculateAverage() {
+      if (students.length === 0) {
+        alert("No students to calculate average.");
+        return;
+      }
+
+      const total = students.reduce((sum, student) => sum + student.marks, 0);
+      const avg = (total / students.length).toFixed(2);
+
+      document.getElementById("studentList").innerHTML = `<h3>Average Marks</h3><p>${avg}</p>`;
+    }
+
+    function findTopper() {
+      if (students.length === 0) {
+        alert("No students to find topper.");
+        return;
+      }
+
+      const topper = students.reduce((max, student) => student.marks > max.marks ? student : max, students[0]);
+
+      document.getElementById("studentList").innerHTML = `<h3>Topper</h3><p>${topper.name} - Marks: ${topper.marks}</p>`;
+    }
+
+    function displayStudents(title, list) {
+      const container = document.getElementById("studentList");
+      container.innerHTML = `<h3>${title}</h3>`;
+
+      if (list.length === 0) {
+        container.innerHTML += "<p>No students to show.</p>";
+        return;
+      }
+
+      const ul = document.createElement("ul");
+      list.forEach((student, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}. ${student.name} - Marks: ${student.marks}`;
+        ul.appendChild(li);
+      });
+
+      container.appendChild(ul);
+    }
+  </script>
+
+</body>
+</html>
